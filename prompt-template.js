@@ -4,6 +4,8 @@ import { PromptTemplate } from "@langchain/core/prompts"
 import { StringOutputParser } from '@langchain/core/output_parsers'
 import { retriever } from './utils/retriever.js'
 import { combineDocs } from "./utils/combineDocs.js";
+import { RunnableSequence, RunnablePassthrough } from "@langchain/core/runnables";
+
 
 
 // const OPEN_AI_KEY = process.env.OPENAI_PROJECT_KEY
@@ -29,20 +31,46 @@ const answerTemplate = `
 const answerPrompt = PromptTemplate.fromTemplate(answerTemplate)
 /*
  * 2. Create a chain with the prompt and the model.
-*/
 const questionChain = questionPrompt
     .pipe(llm)
     .pipe(new StringOutputParser())
     .pipe(retriever)
     .pipe(combineDocs)
     .pipe(answerPrompt)
+*/
+/**
+ * 3. Super Challenge.
+ * 
+ * Set up a RunnableSequence so that 
+ * 
+ * 1. the questionPrompt passes the standalone question to the retriever,
+ * 2. and the retriever passes the combined docs as context to the answerPrompt.
+ *
+ *  Remember,the answerPrompt should also have access to the original question. 
+ * 
+ * When you have finished the challenge, you should see a 
+ * conversational answer to our question in the console.
+ * 
+**/
+const questionChain = RunnableSequence.from([questionPrompt, llm, new StringOutputParser()])
+const chain = RunnableSequence.from([
+    questionChain,
+    (prevResult) => console.log(prevResult),
+])
+// console.log(chain)
+// const docsChain = RunnableSequence.from([
+//     {
+//         original_input: new RunnablePassthrough(),
+//     }
+// ])
+
 /**
  * 3. Invoke the chain remembering to pass in a question.
  * */
-const response = await questionChain.invoke({
-    question: 'What are the technical requirements for running Scrimba? I only have a very old laptop which is not that powerful.'
-})
-/*
- * 4. Log out the response.
- * **/
-console.log(response)
+// const response = await questionChain.invoke({
+//     question: 'What are the technical requirements for running Scrimba? I only have a very old laptop which is not that powerful.'
+// })
+// /*
+//  * 4. Log out the response.
+//  * **/
+// console.log(response)

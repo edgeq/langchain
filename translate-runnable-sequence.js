@@ -47,7 +47,7 @@ const chain = RunnableSequence.from([
  */
 
 /**
- * OPTION B - break up runnable sequences
+ * OPTION B - break up runnable sequences and chain them as a RunnableSequence using RunnablePassthrough
  */
 const punctuationChain = RunnableSequence.from([punctuationPrompt, llm, new StringOutputParser()])
 const grammarChain = RunnableSequence.from([grammarPrompt, llm, new StringOutputParser()])
