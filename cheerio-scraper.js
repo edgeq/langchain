@@ -1,13 +1,12 @@
 import { CheerioWebBaseLoader } from "@langchain/community/document_loaders/web/cheerio";
 
 const webLoader = new CheerioWebBaseLoader(
-    'https://www.strymon.net/product/bigsky-mx/',
+    'https://en.wikipedia.org/wiki/Reverb_effect',
     {
-        selector: 'h1, h2, h3, p, em, strong, i',
+        selector: '#bodyContent > h1, h2, p',
     }
 )
 
 const docs = await webLoader.load()
 
 console.log(docs)
-console.log(docs[0])
