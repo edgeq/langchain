@@ -59,11 +59,14 @@ const vectorStore = await MemoryVectorStore.fromDocuments(
 const retriever = vectorStore.asRetriever()
 
 const retrievalChain = await createRetrievalChain({
-    combineDocsChain: docsChain,
-    retriever, // the context we want to "stuff"
+    combineDocsChain: docsChain, // them model config and the prompt to stuff into
+    retriever, // the context we want to "stuff" into using the relevant docs and embeddings
 })
 const response = await retrievalChain.invoke({
-    input: 'explain echo chambers', // ths input our prompt expects
+    // Remember how we had to do that weird retriever.invoke() thing?
+    // We bypass that step altogether by using a retrieval chain 
+    // ths input our prompt expects
+    input: 'explain echo chambers',
 })
 
 console.log(response)

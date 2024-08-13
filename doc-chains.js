@@ -43,7 +43,7 @@ const embeddings = new OpenAIEmbeddings({
 // https://js.langchain.com/v0.2/docs/integrations/vectorstores/memory/
 // Here's another way to work with in-memory vectro stores
 const vectorStore = await MemoryVectorStore.fromDocuments(splitDocs, embeddings)
-// Only return 2 docs that match the string we give it
+// Only return 4 docs that match the string we give it
 const retriever = vectorStore.asRetriever(4)
 // I guess this front-loads the docs with a 'topic'?
 const retrieverDocs = await retriever.invoke('reverb')
