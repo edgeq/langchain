@@ -1,5 +1,5 @@
 /**
- * Follow along with LangChain Docs: 
+ * Riffing along with LangChain Docs: 
  * https://js.langchain.com/v0.2/docs/tutorials/agents/
  */
 import 'dotenv/config';
@@ -8,7 +8,7 @@ import { TavilySearchResults } from "@langchain/community/tools/tavily_search";
 import { retriever } from './cheerio-scraper.js';
 import { createRetrieverTool } from 'langchain/tools/retriever';
 import { ChatPromptTemplate } from "@langchain/core/prompts";
-// import * as hub from "langchain/hub";
+// import * as hub from "langchain/hub"; // this lets us grab a pre-written prompt
 import { AgentExecutor, createOpenAIFunctionsAgent } from 'langchain/agents';
 import { HumanMessage, AIMessage } from '@langchain/core/messages'
 import readline from 'node:readline'
@@ -16,7 +16,6 @@ import readline from 'node:readline'
 
 // We will use the searchTool to do some internet searches
 const searchTool = new TavilySearchResults();
-// const toolResult = await searchTool.invoke('What are the latest stereo delay pedals?');
 // We will use the retriever tool to search our local knowledge base.
 // In this case, it's a scraped webpage, but it could be a PDF, or word doc, etc...
 const retrieverTool = createRetrieverTool(retriever, {
@@ -26,27 +25,28 @@ const retrieverTool = createRetrieverTool(retriever, {
 
 const tools = [searchTool, retrieverTool]
 
+// This is a pre-formatted prompt.
+// const prompt = await hub.pull("hwchase17/openai-functions-agent");
+// I've written it as a ChatPromptTemplate for clarity. 
 const prompt = ChatPromptTemplate.fromMessages([
   ["system", "You are a helpful assistant"],
   ["placeholder", "{chat_history}"],
   ["human", "{input}"],
   ["placeholder", "{agent_scratchpad}"],
 ])
-
-// const prompt = await hub.pull("hwchase17/openai-functions-agent");
-
+// createOpenAiFunctionsAgent sets us up to use both our model
+// and the tools we want to use
 const agent = await createOpenAIFunctionsAgent({
     llm: openai,
     prompt,
     tools,
 })
-
+// Agent Executor is what we will invoke
 const agentExecutor = new AgentExecutor({
     agent,
     tools,
 })
-
-
+// Sets up a terminal interface
 const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
