@@ -23,7 +23,7 @@ const vectorStore = await MemoryVectorStore.fromDocuments(docs, new OpenAIEmbedd
 
 const retriever = vectorStore.asRetriever()
 
-const retrieverResult = await retriever.invoke('what is reverb?')
+// const retrieverResult = await retriever.invoke('what is reverb?')
 
 // console.log(retrieverResult)
 export { retriever }
